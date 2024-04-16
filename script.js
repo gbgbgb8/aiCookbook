@@ -4,36 +4,39 @@ document.addEventListener('DOMContentLoaded', function() {
     const buttonContainer = document.getElementById('recipeButtons');
     const loadingIndicator = document.getElementById('loadingIndicator');
     const searchBox = document.getElementById('searchBox');
-    let recipes = []; // This will store an array of objects containing filename and title
+    let recipes = [];
 
-    // Function to load and check files sequentially
-    function loadFilesSequentially(index = 1) {
-        if (index > 999) { // Stop after 999.md
-            loadingIndicator.style.display = 'none'; // Hide loading indicator
-            searchBox.disabled = false; // Enable search box
-            createButtons(); // Initially create all buttons
-            return;
+    // Function to load all markdown files in parallel
+    async function loadAllFiles() {
+        let filePromises = [];
+
+        // Prepare promises for each file from 001 to 999
+        for (let i = 1; i <= 999; i++) {
+            const file = `${i.toString().padStart(3, '0')}.md`;
+            const promise = fetch(file)
+                .then(response => {
+                    if (!response.ok) throw new Error('File not found');
+                    return response.text();
+                })
+                .then(text => {
+                    const title = text.split('\n')[0].replace('## ', '');
+                    recipes.push({ filename: file, title: title, content: text });
+                })
+                .catch(() => null);  // Ignore errors, simply do nothing if the file isn't found
+            filePromises.push(promise);
         }
 
-        const file = `${index.toString().padStart(3, '0')}.md`;
-        fetch(file)
-            .then(response => {
-                if (!response.ok) throw new Error('File not found');
-                return response.text();
-            })
-            .then(text => {
-                const title = text.split('\n')[0].replace('## ', '');
-                recipes.push({filename: file, title: title, content: text});
-                loadFilesSequentially(index + 1); // Load next file
-            })
-            .catch(() => {
-                loadFilesSequentially(index + 1); // Attempt to load next file even if current one fails
-            });
+        // Wait for all promises to settle
+        await Promise.all(filePromises);
+        recipes.sort((a, b) => a.filename.localeCompare(b.filename));  // Optional: sort recipes by filename
+        createButtons();  // Create buttons for all loaded recipes
+        loadingIndicator.style.display = 'none';  // Hide loading indicator
+        searchBox.disabled = false;  // Enable search box
     }
 
     // Function to create buttons from loaded recipes
     function createButtons() {
-        buttonContainer.innerHTML = ''; // Clear existing buttons
+        buttonContainer.innerHTML = '';  // Clear existing buttons
         recipes.forEach(recipe => {
             const button = document.createElement('button');
             button.textContent = recipe.title;
@@ -67,5 +70,5 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    loadFilesSequentially();
+    loadAllFiles();
 });
