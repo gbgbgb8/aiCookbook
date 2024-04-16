@@ -12,9 +12,30 @@ body {
     margin: auto;
 }
 
-.recipe-list div {
-    margin-top: 10px;
-    padding: 10px;
-    border: 1px solid #555;
+.recipe-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    margin-bottom: 20px;
+}
+
+.btn {
+    background-color: #575757;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    margin: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.btn:hover {
+    background-color: #7a7a7a;
+}
+
+.recipe-content {
+    padding: 20px;
+    background-color: #555;
     border-radius: 5px;
+    min-height: 200px;
 }
