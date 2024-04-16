@@ -2,9 +2,17 @@ document.addEventListener('DOMContentLoaded', function() {
     const md = window.markdownit();
     const contentElement = document.getElementById('recipeContent');
     const buttonContainer = document.getElementById('recipeButtons');
+    const loadingIndicator = document.getElementById('loadingIndicator');
+    const searchBox = document.getElementById('searchBox');
 
     // Function to load and check files sequentially
     function loadFilesSequentially(index = 1) {
+        if (index > 999) { // Stop after 999.md
+            loadingIndicator.style.display = 'none'; // Hide loading indicator
+            searchBox.disabled = false; // Enable search box
+            return;
+        }
+
         const file = `${index.toString().padStart(3, '0')}.md`;
         fetch(file)
             .then(response => {
@@ -16,7 +24,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 loadFilesSequentially(index + 1); // Load next file
             })
             .catch(() => {
-                console.log('No more files to load');
+                loadFilesSequentially(index + 1); // Attempt to load next file even if current one fails
             });
     }
 
