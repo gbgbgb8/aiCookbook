@@ -4,12 +4,14 @@ document.addEventListener('DOMContentLoaded', function() {
     const buttonContainer = document.getElementById('recipeButtons');
     const loadingIndicator = document.getElementById('loadingIndicator');
     const searchBox = document.getElementById('searchBox');
+    let recipes = []; // This will store an array of objects containing filename and title
 
     // Function to load and check files sequentially
     function loadFilesSequentially(index = 1) {
         if (index > 999) { // Stop after 999.md
             loadingIndicator.style.display = 'none'; // Hide loading indicator
             searchBox.disabled = false; // Enable search box
+            createButtons(); // Initially create all buttons
             return;
         }
 
@@ -20,7 +22,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 return response.text();
             })
             .then(text => {
-                createButton(file, text);
+                const title = text.split('\n')[0].replace('## ', '');
+                recipes.push({filename: file, title: title, content: text});
                 loadFilesSequentially(index + 1); // Load next file
             })
             .catch(() => {
@@ -28,18 +31,41 @@ document.addEventListener('DOMContentLoaded', function() {
             });
     }
 
-    // Function to create a button from file data
-    function createButton(filename, fileContent) {
-        const title = fileContent.split('\n')[0].replace('## ', ''); // Assumes title is on the first line
-        const button = document.createElement('button');
-        button.textContent = title;
-        button.classList.add('btn');
-        button.onclick = () => {
-            const result = md.render(fileContent);
-            contentElement.innerHTML = result;
-        };
-        buttonContainer.appendChild(button);
+    // Function to create buttons from loaded recipes
+    function createButtons() {
+        buttonContainer.innerHTML = ''; // Clear existing buttons
+        recipes.forEach(recipe => {
+            const button = document.createElement('button');
+            button.textContent = recipe.title;
+            button.classList.add('btn');
+            button.onclick = () => {
+                const result = md.render(recipe.content);
+                contentElement.innerHTML = result;
+            };
+            buttonContainer.appendChild(button);
+        });
     }
+
+    // Event listener for search functionality
+    searchBox.addEventListener('input', () => {
+        const searchTerm = searchBox.value.toLowerCase();
+        const filteredRecipes = recipes.filter(recipe => recipe.title.toLowerCase().includes(searchTerm));
+        if (searchTerm) {
+            buttonContainer.innerHTML = ''; // Clear existing buttons
+            filteredRecipes.forEach(recipe => {
+                const button = document.createElement('button');
+                button.textContent = recipe.title;
+                button.classList.add('btn');
+                button.onclick = () => {
+                    const result = md.render(recipe.content);
+                    contentElement.innerHTML = result;
+                };
+                buttonContainer.appendChild(button);
+            });
+        } else {
+            createButtons(); // Re-create all buttons if search box is cleared
+        }
+    });
 
     loadFilesSequentially();
 });
