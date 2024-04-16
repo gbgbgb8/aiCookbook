@@ -1,45 +1,37 @@
 document.addEventListener('DOMContentLoaded', function() {
     const md = window.markdownit();
-    const recipes = ['taquitos.md', 'minicorndogs.md', 'sloppyjoes.md', 'fishtacos.md', 'mexicanpizza.md'];
-    const buttonContainer = document.getElementById('recipeButtons');
     const contentElement = document.getElementById('recipeContent');
-    const searchBox = document.getElementById('searchBox');
+    const buttonContainer = document.getElementById('recipeButtons');
 
-    // Function to create buttons for each recipe
-    function createRecipeButtons() {
-        recipes.forEach(file => {
-            const button = document.createElement('button');
-            button.textContent = file.replace('.md', '');
-            button.classList.add('btn');
-            button.onclick = () => loadRecipe(file);
-            buttonContainer.appendChild(button);
-        });
-    }
-
-    // Function to load and display the content of a recipe
-    function loadRecipe(file) {
+    // Function to load and check files sequentially
+    function loadFilesSequentially(index = 1) {
+        const file = `${index.toString().padStart(3, '0')}.md`;
         fetch(file)
-            .then(response => response.text())
-            .then(text => {
-                const result = md.render(text);
-                contentElement.innerHTML = result;
+            .then(response => {
+                if (!response.ok) throw new Error('File not found');
+                return response.text();
             })
-            .catch(error => console.error('Error loading the Markdown file:', error));
+            .then(text => {
+                createButton(file, text);
+                loadFilesSequentially(index + 1); // Load next file
+            })
+            .catch(() => {
+                console.log('No more files to load');
+            });
     }
 
-    // Event listener for search functionality
-    searchBox.addEventListener('input', () => {
-        const searchTerm = searchBox.value.toLowerCase();
-        const filtered = recipes.filter(file => file.toLowerCase().includes(searchTerm));
-        buttonContainer.innerHTML = ''; // Clear previous buttons
-        filtered.forEach(file => {
-            const button = document.createElement('button');
-            button.textContent = file.replace('.md', '');
-            button.classList.add('btn');
-            button.onclick = () => loadRecipe(file);
-            buttonContainer.appendChild(button);
-        });
-    });
+    // Function to create a button from file data
+    function createButton(filename, fileContent) {
+        const title = fileContent.split('\n')[0].replace('## ', ''); // Assumes title is on the first line
+        const button = document.createElement('button');
+        button.textContent = title;
+        button.classList.add('btn');
+        button.onclick = () => {
+            const result = md.render(fileContent);
+            contentElement.innerHTML = result;
+        };
+        buttonContainer.appendChild(button);
+    }
 
-    createRecipeButtons();
+    loadFilesSequentially();
 });
