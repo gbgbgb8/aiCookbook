@@ -8,10 +8,13 @@ body {
     padding: 20px;
     border-radius: 8px;
     background-color: #444;
+    width: 80%;
+    margin: auto;
 }
 
-/* Dark mode adjustments for better readability */
-code, pre {
-    background-color: #555 !important; /* Ensuring code blocks are visible */
-    color: #dcdcdc;
+.recipe-list div {
+    margin-top: 10px;
+    padding: 10px;
+    border: 1px solid #555;
+    border-radius: 5px;
 }

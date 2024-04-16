@@ -8,7 +8,11 @@
     <title>Recipe Book</title>
 </head>
 <body>
-    <div class="container" id="content" style="margin-top: 20px;"></div>
+    <div class="container">
+        <input type="text" id="searchBox" class="form-input" placeholder="Search for recipes...">
+        <div id="randomRecipes" class="recipe-list"></div>
+        <div id="searchResults" class="recipe-list"></div>
+    </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/markdown-it/13.0.2/markdown-it.min.js"></script>
     <script src="script.js"></script>
 </body>
