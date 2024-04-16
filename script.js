@@ -6,11 +6,11 @@ document.addEventListener('DOMContentLoaded', function() {
     const searchBox = document.getElementById('searchBox');
     let recipes = [];
 
-    // Function to load all markdown files in parallel
+    
     async function loadAllFiles() {
         let filePromises = [];
 
-        // Prepare promises for each file from 001 to 999
+        
         for (let i = 1; i <= 999; i++) {
             const file = `${i.toString().padStart(3, '0')}.md`;
             const promise = fetch(file)
@@ -22,21 +22,21 @@ document.addEventListener('DOMContentLoaded', function() {
                     const title = text.split('\n')[0].replace('## ', '');
                     recipes.push({ filename: file, title: title, content: text });
                 })
-                .catch(() => null);  // Ignore errors, simply do nothing if the file isn't found
+                .catch(() => null);  
             filePromises.push(promise);
         }
 
-        // Wait for all promises to settle
+        
         await Promise.all(filePromises);
-        recipes.sort((a, b) => a.filename.localeCompare(b.filename));  // Optional: sort recipes by filename
-        createButtons();  // Create buttons for all loaded recipes
-        loadingIndicator.style.display = 'none';  // Hide loading indicator
-        searchBox.disabled = false;  // Enable search box
+        recipes.sort((a, b) => a.filename.localeCompare(b.filename));  
+        createButtons();  
+        loadingIndicator.style.display = 'none';  
+        searchBox.disabled = false;  
     }
 
-    // Function to create buttons from loaded recipes
+    
     function createButtons() {
-        buttonContainer.innerHTML = '';  // Clear existing buttons
+        buttonContainer.innerHTML = '';  
         recipes.forEach(recipe => {
             const button = document.createElement('button');
             button.textContent = recipe.title;
@@ -49,12 +49,12 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Event listener for search functionality
+    
     searchBox.addEventListener('input', () => {
         const searchTerm = searchBox.value.toLowerCase();
         const filteredRecipes = recipes.filter(recipe => recipe.title.toLowerCase().includes(searchTerm));
         if (searchTerm) {
-            buttonContainer.innerHTML = ''; // Clear existing buttons
+            buttonContainer.innerHTML = ''; 
             filteredRecipes.forEach(recipe => {
                 const button = document.createElement('button');
                 button.textContent = recipe.title;
@@ -66,7 +66,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 buttonContainer.appendChild(button);
             });
         } else {
-            createButtons(); // Re-create all buttons if search box is cleared
+            createButtons(); 
         }
     });
 
