@@ -26,6 +26,7 @@ document.addEventListener('DOMContentLoaded', function() {
         await Promise.all(filePromises);
         recipes.sort((a, b) => a.filename.localeCompare(b.filename));
         createButtons();
+        checkURLAndDisplayRecipe();  // Check URL to see if a recipe needs to be displayed
         loadingIndicator.style.display = 'none';  // Hide loading indicator once files are loaded
         searchBox.disabled = false;  // Enable the search box after loading
     }
@@ -48,20 +49,20 @@ document.addEventListener('DOMContentLoaded', function() {
     function displayRecipe(recipe) {
         const result = md.render(recipe.content);
         contentElement.innerHTML = result;
-        createShareButton(recipe.title, recipe.content);
+        createShareButton(recipe.title, recipe.filename);
     }
 
     // Create and append the share button
-    function createShareButton(title, text) {
+    function createShareButton(title, filename) {
         const shareButton = document.createElement('button');
         shareButton.textContent = 'Share';
         shareButton.classList.add('btn', 'btn-share');
+        const permalink = `${window.location.origin}${window.location.pathname}?recipe=${filename}`; // Constructs the permalink
         shareButton.onclick = () => {
             if (navigator.share) {
                 navigator.share({
                     title: title,
-                    text: text,
-                    url: window.location.href
+                    url: permalink
                 }).then(() => console.log('Content shared successfully!'))
                   .catch(error => console.log('Error sharing:', error));
             } else {
@@ -69,6 +70,18 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         };
         contentElement.appendChild(shareButton);
+    }
+
+    // Check the URL for a 'recipe' query parameter and display it if present
+    function checkURLAndDisplayRecipe() {
+        const params = new URLSearchParams(window.location.search);
+        const filename = params.get('recipe');
+        if (filename) {
+            const recipe = recipes.find(r => r.filename === filename);
+            if (recipe) {
+                displayRecipe(recipe);
+            }
+        }
     }
 
     // Search functionality to filter recipes
@@ -91,5 +104,5 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    loadAllFiles();
+    loadAllFiles();  // Start loading all recipes when the page loads
 });
