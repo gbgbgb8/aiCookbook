@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const searchBox = document.getElementById('searchBox');
     let recipes = [];
 
+    // Asynchronously load all Markdown files
     async function loadAllFiles() {
         let filePromises = [];
         for (let i = 1; i <= 999; i++) {
@@ -19,16 +20,17 @@ document.addEventListener('DOMContentLoaded', function() {
                     const title = text.split('\n')[0].replace('## ', '');
                     recipes.push({ filename: file, title: title, content: text });
                 })
-                .catch(() => null);
+                .catch(() => null);  // Handle missing files gracefully
             filePromises.push(promise);
         }
         await Promise.all(filePromises);
         recipes.sort((a, b) => a.filename.localeCompare(b.filename));
         createButtons();
-        loadingIndicator.style.display = 'none';
-        searchBox.disabled = false;
+        loadingIndicator.style.display = 'none';  // Hide loading indicator once files are loaded
+        searchBox.disabled = false;  // Enable the search box after loading
     }
 
+    // Create buttons for each recipe
     function createButtons() {
         buttonContainer.innerHTML = '';
         recipes.forEach(recipe => {
@@ -36,14 +38,20 @@ document.addEventListener('DOMContentLoaded', function() {
             button.textContent = recipe.title;
             button.classList.add('btn');
             button.onclick = () => {
-                const result = md.render(recipe.content);
-                contentElement.innerHTML = result;
-                createShareButton(recipe.title, recipe.content);
+                displayRecipe(recipe);
             };
             buttonContainer.appendChild(button);
         });
     }
 
+    // Display the selected recipe and append a share button
+    function displayRecipe(recipe) {
+        const result = md.render(recipe.content);
+        contentElement.innerHTML = result;
+        createShareButton(recipe.title, recipe.content);
+    }
+
+    // Create and append the share button
     function createShareButton(title, text) {
         const shareButton = document.createElement('button');
         shareButton.textContent = 'Share';
@@ -63,6 +71,7 @@ document.addEventListener('DOMContentLoaded', function() {
         contentElement.appendChild(shareButton);
     }
 
+    // Search functionality to filter recipes
     searchBox.addEventListener('input', () => {
         const searchTerm = searchBox.value.toLowerCase();
         const filteredRecipes = recipes.filter(recipe => recipe.title.toLowerCase().includes(searchTerm));
@@ -73,14 +82,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 button.textContent = recipe.title;
                 button.classList.add('btn');
                 button.onclick = () => {
-                    const result = md.render(recipe.content);
-                    contentElement.innerHTML = result;
-                    createShareButton(recipe.title, recipe.content);
+                    displayRecipe(recipe);
                 };
                 buttonContainer.appendChild(button);
             });
         } else {
-            createButtons();
+            createButtons();  // Re-create all buttons if search box is cleared
         }
     });
 
