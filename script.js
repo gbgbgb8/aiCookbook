@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Asynchronously load all Markdown files
     async function loadAllFiles() {
         let filePromises = [];
-        for (let i = 1; i <= 999; i++) {
+        for (let i = 1; i <= 20; i++) {
             const file = `${i.toString().padStart(3, '0')}.md`;
             const promise = fetch(file)
                 .then(response => {
@@ -46,10 +46,31 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Display the selected recipe and append a share button
-    function displayRecipe(recipe) {
+    async function displayRecipe(recipe) {
         const result = md.render(recipe.content);
         contentElement.innerHTML = result;
+        await loadImage(recipe.filename.slice(0, -3));
         createShareButton(recipe.title, recipe.filename);
+    }
+
+    async function loadImage(filenameWithoutMd) {
+        const extensions = ['jpg', 'jpeg', 'png'];
+        for (let ext of extensions) {
+            try {
+                const path = `${filenameWithoutMd}${ext}`;
+                const response = await fetch(path);
+                if (response.ok) {
+                    const image = new Image();
+                    image.src = path;
+                    image.alt = 'Recipe Image';
+                    image.style.width = '100%'; // Set the image width to 100% of the container
+                    contentElement.insertBefore(image, contentElement.firstChild);
+                    break;
+                }
+            } catch (error) {
+                console.error('Failed to load image:', error);
+            }
+        }
     }
 
     // Create and append the share button
