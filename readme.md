@@ -44,5 +44,16 @@ Each markdown recipe is meticulously structured to ensure ease of use and clarit
 
 This structured approach not only maintains uniformity across the digital cookbook but also enhances the user experience by making recipes easy to follow and visually engaging.
 
+Here’s a prompt you can use to get a recipe in the structured format for `aiCookbook`:
+
+---
+
+"Could you provide a markdown recipe for [RECIPE NAME OR DESCRIPTION HERE], including sections for ingredients, equipment needed, instructions, and a shopping list? Please structure with headings for each section, bolded categories, and numbered steps for the instructions." 
+
+---
+
+Just replace "[RECIPE NAME OR DESCRIPTION HERE]" with the specific recipe or type of dish you are interested in.
+
+
 ## License
 This project is licensed under the MIT License.
