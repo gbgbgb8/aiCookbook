@@ -44,16 +44,32 @@ Each markdown recipe is meticulously structured to ensure ease of use and clarit
 
 This structured approach not only maintains uniformity across the digital cookbook but also enhances the user experience by making recipes easy to follow and visually engaging.
 
-Here’s a prompt you can use to get a recipe in the structured format for `aiCookbook`:
+Here's an enhanced prompt that includes detailed specifications for zero-shot generation of a recipe in the format used in the `aiCookbook` project:
 
 ---
 
-"Could you provide a markdown recipe for [RECIPE NAME OR DESCRIPTION HERE], including sections for ingredients, equipment needed, instructions, and a shopping list? Please structure with headings for each section, bolded categories, and numbered steps for the instructions." 
+"Could you provide a detailed markdown recipe for [RECIPE NAME OR DESCRIPTION HERE]? The recipe should be formatted according to the guidelines of the aiCookbook project:
+
+### Recipe Structure:
+- **Title**: Use a level 2 heading (`##`) for the recipe name.
+- **Ingredients Section**: Categorize ingredients by type (e.g., Meat, Vegetables, Seasoning). List ingredients with specific quantities and descriptions. Format the category titles in bold.
+- **Equipment Needed Section**: List all the necessary cooking tools and equipment as a simple bullet list under a level 3 heading (`###`).
+- **Instructions Section**: Provide the cooking steps as a numbered list, starting each step with a bold action word (e.g., Prepare, Cook, Serve) to clearly guide through the cooking process.
+- **Shopping List Section**: Organize the shopping list by categories similar to the ingredients section, and use checkboxes (`[ ]`) for each item to allow users to interactively mark what they need.
+
+### Markdown Features to Use:
+- **Bold** for emphasis on section titles and key terms within the instructions.
+- **Bullet lists** to enumerate equipment and ingredients.
+- **Numbered lists** for the sequential steps in the instructions.
+- **Checkboxes** in the shopping list for user interaction.
+
+This structured approach ensures that the recipe is easy to follow and enhances user engagement. Make sure the recipe is visually engaging and maintains uniformity with other entries in the digital cookbook."
 
 ---
 
-Just replace "[RECIPE NAME OR DESCRIPTION HERE]" with the specific recipe or type of dish you are interested in.
+Replace "[RECIPE NAME OR DESCRIPTION HERE]" with the specific recipe or dish description to get a well-structured and formatted markdown recipe response. This prompt is designed to ensure that all necessary details are included and formatted correctly according to your project's standards.
 
+Save the response into a markdown file like 042.md and optionally include a relevant photo as 042.jpg along with the other .md and .jpg files in the root folder.
 
 ## License
 This project is licensed under the MIT License.
